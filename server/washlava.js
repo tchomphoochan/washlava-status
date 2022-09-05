@@ -119,6 +119,9 @@ async function initialize() {
     setTimeout(() => doMachineJob(id), 0);
     setInterval(() => doMachineJob(id), 60 * 1000);
   }
+  setInterval(() => {
+    axios.get("http://laundry.tcpc.me");
+  }, 20 * 60 * 1000); // every 20 minutes
 }
 
 function getMachines() {
