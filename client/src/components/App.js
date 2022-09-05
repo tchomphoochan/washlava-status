@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Main from "./pages/Main.js";
 
-import "../utilities.css";
+import "semantic-ui-css/semantic.min.css";
+import "normalize.css";
 
 /**
  * Define the "App" component

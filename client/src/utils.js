@@ -1,19 +1,23 @@
 // copied from here
 // https://muffinman.io/blog/javascript-time-ago-function/
 
+function capitalize(text) {
+  return text ? text[0].toUpperCase() + text.substring(1) : text;
+}
+
 const MONTH_NAMES = [
-  "January",
-  "February",
-  "March",
-  "April",
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
   "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
 ];
 
 function getFormattedDate(date, prefomattedDate = false, hideYear = false) {
@@ -36,11 +40,10 @@ function getFormattedDate(date, prefomattedDate = false, hideYear = false) {
 
   if (hideYear) {
     // 10. January at 10:20
-    return `${day}. ${month} at ${hours}:${minutes}`;
+    return `${month} ${day}`;
   }
 
-  // 10. January 2017. at 10:20
-  return `${day}. ${month} ${year}. at ${hours}:${minutes}`;
+  return `${month} ${day} ${year}`;
 }
 
 function timeAgo(dateParam) {
@@ -54,6 +57,7 @@ function timeAgo(dateParam) {
   const yesterday = new Date(today - DAY_IN_MS);
   const seconds = Math.round((today - date) / 1000);
   const minutes = Math.round(seconds / 60);
+  const hours = Math.round(minutes / 60);
   const isToday = today.toDateString() === date.toDateString();
   const isYesterday = yesterday.toDateString() === date.toDateString();
   const isThisYear = today.getFullYear() === date.getFullYear();
@@ -66,10 +70,13 @@ function timeAgo(dateParam) {
     return "about a minute ago";
   } else if (minutes < 60) {
     return `${minutes} minutes ago`;
+  } else if (hours < 24) {
+    if (hours == 1) return `an hour ago`;
+    else return `${hours} hours ago`;
   } else if (isToday) {
-    return getFormattedDate(date, "Today"); // Today at 10:20
+    return getFormattedDate(date, "today"); // Today at 10:20
   } else if (isYesterday) {
-    return getFormattedDate(date, "Yesterday"); // Yesterday at 10:20
+    return getFormattedDate(date, "yesterday"); // Yesterday at 10:20
   } else if (isThisYear) {
     return getFormattedDate(date, false, true); // 10. January at 10:20
   }
@@ -79,4 +86,5 @@ function timeAgo(dateParam) {
 
 export default {
   timeAgo,
+  capitalize,
 };

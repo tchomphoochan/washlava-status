@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 
 import api from "../../api";
 import utils from "../../utils";
-import "../../utilities.css";
 import "./Main.css";
+
+import Machine from "../modules/Machine";
+import { Card } from "semantic-ui-react";
 
 function Main() {
   const [machines, setMachines] = useState([]);
@@ -23,16 +25,14 @@ function Main() {
   }, []);
 
   return (
-    <div>
-      <h1>Machines!</h1>
-      <ul>
+    <div id="main">
+      <h1>Next House</h1>
+
+      <Card.Group stackable={true}>
         {machines.map((machine) => (
-          <li>
-            {machine.type} {machine.id}, {machine.location}, {machine.status} since{" "}
-            {utils.timeAgo(machine.since)}
-          </li>
+          <Machine key={machine.id} machine={machine} />
         ))}
-      </ul>
+      </Card.Group>
     </div>
   );
 }
