@@ -8,39 +8,19 @@
 */
 
 const express = require("express");
-
-// import models so we can interact with the database
-const User = require("./models/user");
-
-// import authentication library
-const auth = require("./auth");
+const asyncHandler = require("express-async-handler");
+const washlava = require("./washlava");
 
 // api endpoints: all these paths will be prefixed with "/api/"
 const router = express.Router();
 
-//initialize socket
-const socketManager = require("./server-socket");
-
-router.post("/login", auth.login);
-router.post("/logout", auth.logout);
-router.get("/whoami", (req, res) => {
-  if (!req.user) {
-    // not logged in
-    return res.send({});
-  }
-
-  res.send(req.user);
-});
-
-router.post("/initsocket", (req, res) => {
-  // do nothing if user not logged in
-  if (req.user) socketManager.addUser(req.user, socketManager.getSocketFromSocketID(req.body.socketid));
-  res.send({});
-});
-
-// |------------------------------|
-// | write your API methods below!|
-// |------------------------------|
+router.get(
+  "/machines",
+  asyncHandler(async (req, res) => {
+    const machines = washlava.getMachines();
+    res.send({ machines: Object.fromEntries(machines) });
+  })
+);
 
 // anything else falls to this "not found" case
 router.all("*", (req, res) => {
