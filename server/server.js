@@ -25,11 +25,26 @@ validator.checkSetup();
 const http = require("http");
 const express = require("express"); // backend framework for our node server.
 const session = require("express-session"); // library that stores info about each connected user
+const mongoose = require("mongoose"); // library to connect to MongoDB
 const path = require("path"); // provide utilities for working with file and directory paths
 
 const auth = require("./auth");
 const api = require("./api");
 const washlava = require("./washlava");
+
+// Server configuration below
+const mongoConnectionURL = process.env.MONGODB_SRV;
+const databaseName = process.env.MONGODB_NAME;
+
+// connect to mongodb
+mongoose
+  .connect(mongoConnectionURL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    dbName: databaseName,
+  })
+  .then(() => console.log("Connected to MongoDB"))
+  .catch((err) => console.log(`Error connecting to MongoDB: ${err}`));
 
 // create a new express server
 const app = express();

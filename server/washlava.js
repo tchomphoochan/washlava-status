@@ -1,4 +1,5 @@
 const axios = require("axios");
+const Log = require("./models/log");
 
 const machines = new Map();
 const statusChanges = new Map();
@@ -15,6 +16,12 @@ let currentAuthToken = undefined;
  * Create new authentication and set server state to use the new token.
  */
 async function createNewAuth() {
+  // log the auth
+  const log = new Log({
+    eventType: "auth_start",
+  });
+  await log.save();
+
   const response = await axios.post("https://washlava-prod.auth0.com/oauth/ro", {
     grant_type: "password",
     scope: "openid offline_access",
@@ -32,10 +39,25 @@ async function createNewAuth() {
  * @throws An error if fail to confirm current authentication.
  */
 async function confirmAuthStatus() {
-  const response = await axios.post("https://washlava-prod.auth0.com/tokeninfo", {
-    id_token: currentAuthToken,
-  });
-  const data = await response.data;
+  try {
+    const response = await axios.post("https://washlava-prod.auth0.com/tokeninfo", {
+      id_token: currentAuthToken,
+    });
+    const data = await response.data;
+
+    // log the auth
+    const log = new Log({
+      eventType: "auth_check_pass",
+    });
+    await log.save();
+  } catch (e) {
+    // log the auth
+    const log = new Log({
+      eventType: "auth_check_fail",
+    });
+    await log.save();
+    throw e;
+  }
 }
 
 /**
@@ -52,12 +74,20 @@ async function fetchMachineInfo(id) {
   // keep track of when this status was last changed
   const change = statusChanges.get(id);
   let since;
-  if (change === undefined) {
-    since = undefined;
+  if (change === undefined || change.status !== data.status) {
+    if (change === undefined) since = undefined;
+    else since = new Date();
     statusChanges.set(id, { status: data.status, since });
-  } else if (change.status !== data.status) {
-    since = new Date();
-    statusChanges.set(id, { status: data.status, since });
+
+    // log the change
+    const log = new Log({
+      eventType: "machine_status",
+      machineId: data.identifier.toString(),
+      previousStatus: change?.status,
+      newStatus: data.status,
+    });
+
+    await log.save();
   } else {
     since = change.since;
   }
@@ -173,6 +203,12 @@ function getLocation(id) {
 
 async function initialize() {
   precompute();
+
+  // log the startup
+  const log = new Log({
+    eventType: "startup",
+  });
+  await log.save();
 
   await createNewAuth();
   setTimeout(doMaintainAuthJob, 10 * 60 * 1000);

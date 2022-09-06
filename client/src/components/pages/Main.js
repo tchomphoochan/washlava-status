@@ -101,8 +101,8 @@ function Main() {
           <Header as="h3">
             Available machines
             <Header.Subheader>
-              Sorted by least recently active first, so you know whose clothes to throw out. You're
-              welcome.
+              Sorted by least recently active machines first, so you know whose clothes to throw
+              out. You're welcome.
             </Header.Subheader>
           </Header>
           <MachineList machines={available} />
