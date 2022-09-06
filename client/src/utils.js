@@ -2,7 +2,9 @@
 // https://muffinman.io/blog/javascript-time-ago-function/
 
 function capitalize(text) {
-  return text ? text[0].toUpperCase() + text.substring(1) : text;
+  var ret = text ? text[0].toUpperCase() + text.substring(1) : text;
+  while (ret.includes("_")) ret = ret.replace("_", " ");
+  return ret;
 }
 
 const MONTH_NAMES = [
@@ -114,7 +116,7 @@ const dormData = new Map(
       name: "East Campus",
       ranges: [
         [1039, 1062],
-        [1128, 1131],
+        // [1128, 1131],
       ], // 24
     },
     macg: {
@@ -135,8 +137,13 @@ function getFullDormName(id) {
   return undefined;
 }
 
+function getLocations() {
+  return [...dormData.keys()];
+}
+
 export default {
   timeAgo,
   capitalize,
   getFullDormName,
+  getLocations,
 };

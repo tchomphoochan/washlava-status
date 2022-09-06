@@ -128,7 +128,7 @@ const dormData = new Map(
       name: "East Campus",
       ranges: [
         [1039, 1062],
-        [1128, 1131],
+        // [1128, 1131],
       ], // 24
     },
     macg: {

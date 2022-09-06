@@ -3,13 +3,15 @@ import { Card, Header } from "semantic-ui-react";
 
 import Machine from "../modules/Machine";
 
-function MachineList({ machines }) {
+function MachineList({ machines, hideEmpty }) {
   if (machines.length === 0) {
-    return (
-      <div style={{ textAlign: "center", margin: "20px" }}>
-        <i>(empty)</i>
-      </div>
-    );
+    if (hideEmpty) return <></>;
+    else
+      return (
+        <div style={{ textAlign: "center", margin: "20px" }}>
+          <i>(empty)</i>
+        </div>
+      );
   } else {
     return (
       <Card.Group centered stackable>

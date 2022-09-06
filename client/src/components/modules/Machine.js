@@ -15,11 +15,11 @@ function Availability({ machine }) {
         </div>
       </>
     );
-  } else if (machine.status === "in_use") {
+  } else if (machine.status === "in_use" || machine.status.includes("reserve")) {
     return (
       <>
         <Label basic color="orange">
-          Activating
+          {utils.capitalize(machine.status)}
         </Label>
         <div style={{ display: "inline", paddingLeft: "6px" }}>
           🕒 <i>{utils.timeAgo(machine.since)}</i>
@@ -41,7 +41,7 @@ function Availability({ machine }) {
     return (
       <>
         <Label basic color="grey">
-          Disabled
+          {utils.capitalize(machine.status)}
         </Label>{" "}
         <div style={{ display: "inline", paddingLeft: "6px" }}>
           🕒 <i>{utils.timeAgo(machine.since)}</i>

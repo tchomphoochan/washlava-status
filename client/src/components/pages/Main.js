@@ -9,8 +9,13 @@ import { Dropdown, Header, Button } from "semantic-ui-react";
 
 function Main() {
   const [machines, setMachines] = useState([]);
-  const [currentLocation, setCurrentLocation] = useState("");
+  const [currentLocation, setCurrentLocation] = useState("next");
   const [machineType, setMachineType] = useState("washer");
+
+  function updateLocation(name) {
+    setCurrentLocation(name);
+    localStorage.setItem("location", name);
+  }
 
   async function fetchDataAndUpdate() {
     const response = await api.getMachines();
@@ -18,24 +23,25 @@ function Main() {
     const machines = Array.from(Object.values(data.machines));
     machines.forEach((machine) => {
       machine.since = new Date(machine.since);
-    });
-    machines.forEach((machine) => {
       machine.queryTimestamp = new Date(machine.queryTimestamp);
     });
     setMachines(machines);
   }
 
   useEffect(() => {
+    const oldLocation = localStorage.getItem("location");
+    if (oldLocation) updateLocation(oldLocation);
+
     fetchDataAndUpdate();
     const task = setInterval(() => fetchDataAndUpdate(), 60 * 1000);
     return () => clearInterval(task);
   }, []);
 
-  const locations = [...new Set(machines.map((machine) => machine.location))];
+  const locations = utils.getLocations();
   const locationOptions = locations.map((location) => {
     return { key: location, value: location, text: utils.getFullDormName(location) };
   });
-  if (currentLocation === "" && locations.length > 0) setCurrentLocation(locations[0]);
+  if (currentLocation === "" && locations.length > 0) updateLocation(locations[0]);
 
   const dormMachines = machines
     .filter((machine) => machine.location === currentLocation)
@@ -61,7 +67,7 @@ function Main() {
               options={locationOptions}
               value={currentLocation}
               onChange={(e, { value }) => {
-                setCurrentLocation(value);
+                updateLocation(value);
               }}
             />
           </div>
@@ -101,7 +107,7 @@ function Main() {
           <MachineList machines={available} />
 
           <Header as="h3">
-            Machines in use
+            Unavailable machines
             <Header.Subheader>
               In case everyone happens to be doing laundry on a Sunday night.
             </Header.Subheader>
