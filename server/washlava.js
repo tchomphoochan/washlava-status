@@ -139,6 +139,10 @@ const dormData = new Map(
       name: "Burton Conner",
       ranges: [[1107, 1127]], // 21
     },
+    nv: {
+      name: "New Vassar",
+      ranges: [[1132, 1171]], // 40
+    },
   })
 );
 const allMachineIds = []; // need to be precomputed
