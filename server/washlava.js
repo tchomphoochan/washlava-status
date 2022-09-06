@@ -52,15 +52,18 @@ async function fetchMachineInfo(id) {
   // keep track of when this status was last changed
   const change = statusChanges.get(id);
   let since;
-  if (change === undefined || change.status !== data.status) {
+  if (change === undefined) {
+    since = undefined;
+    statusChanges.set(id, { status: data.status, since });
+  } else if (change.status !== data.status) {
     since = new Date();
-    statusChanges.set(id, { status: data.status, since: new Date() });
+    statusChanges.set(id, { status: data.status, since });
   } else {
     since = change.since;
   }
 
   return {
-    id: data.identifier,
+    id: data.identifier.toString(),
     type: data.type,
     location: getLocation(data.identifier),
     status: data.status,

@@ -15,6 +15,7 @@ function Main() {
   function updateLocation(name) {
     setCurrentLocation(name);
     localStorage.setItem("location", name);
+    fetchDataAndUpdate();
   }
 
   async function fetchDataAndUpdate() {
@@ -22,8 +23,8 @@ function Main() {
     const data = await response.data;
     const machines = Array.from(Object.values(data.machines));
     machines.forEach((machine) => {
-      machine.since = new Date(machine.since);
-      machine.queryTimestamp = new Date(machine.queryTimestamp);
+      if (machine.since) machine.since = new Date(machine.since);
+      if (machine.queryTimestamp) machine.queryTimestamp = new Date(machine.queryTimestamp);
     });
     setMachines(machines);
   }
@@ -48,9 +49,9 @@ function Main() {
     .filter((machine) => machineType === "both" || machine.type === machineType);
 
   const available = dormMachines.filter((machine) => machine.status === "available");
-  available.sort((a, b) => a.since - b.since).reverse();
+  available.sort((a, b) => a.since ?? -Infinity - b.since ?? -Infinity);
   const unavailable = dormMachines.filter((machine) => machine.status !== "available");
-  unavailable.sort((a, b) => a.since - b.since).reverse();
+  unavailable.sort((a, b) => a.since ?? -Infinity - b.since ?? -Infinity);
 
   return (
     <div id="main">
@@ -100,8 +101,8 @@ function Main() {
           <Header as="h3">
             Available machines
             <Header.Subheader>
-              Sorted by least recently used machines first, so you know whose clothes to throw out.
-              You're welcome.
+              Sorted by least recently active first, so you know whose clothes to throw out. You're
+              welcome.
             </Header.Subheader>
           </Header>
           <MachineList machines={available} />
