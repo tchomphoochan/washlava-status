@@ -104,6 +104,12 @@ function Main() {
           <MachineList machines={unavailable} />
         </div>
       </div>
+
+      <div id="footer" style={{ textAlign: "center", marginTop: "50px", color: "grey" }}>
+        Made with 💔 for Washlava by <a href="mailto:tcpc@mit.edu">tcpc</a>. <br />
+        Found issues? Want to help? <a href="mailto:tcpc@mit.edu">Email me</a> or{" "}
+        <a href="https://github.com/aquablitz11/washlava-status">contribute on Github</a>.
+      </div>
     </div>
   );
 }
