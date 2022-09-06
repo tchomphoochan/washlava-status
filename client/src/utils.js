@@ -84,7 +84,59 @@ function timeAgo(dateParam) {
   return getFormattedDate(date); // 10. January 2017. at 10:20
 }
 
+const dormData = new Map(
+  Object.entries({
+    baker: {
+      name: "Baker House",
+      ranges: [[700, 721]], // 22
+    },
+    mccormick: {
+      name: "McCormick",
+      ranges: [[778, 796]], // 19
+    },
+    simmons: {
+      name: "Simmons Hall",
+      ranges: [[797, 816]], // 20
+    },
+    next: {
+      name: "Next House",
+      ranges: [[829, 850]], // 22
+    },
+    new: {
+      name: "New House",
+      ranges: [[851, 870]], // 20
+    },
+    maseeh: {
+      name: "Maseeh Hall",
+      ranges: [[871, 904]], // 34
+    },
+    ec: {
+      name: "East Campus",
+      ranges: [
+        [1039, 1062],
+        [1128, 1131],
+      ], // 24
+    },
+    macg: {
+      name: "MacGregor House",
+      ranges: [[1075, 1106]], // 32
+    },
+    bc: {
+      name: "Burton Conner",
+      ranges: [[1107, 1127]], // 21
+    },
+  })
+);
+
+function getFullDormName(id) {
+  for (const [name, data] of dormData) {
+    if (name === id) return data.name;
+  }
+  return undefined;
+}
+
 export default {
   timeAgo,
   capitalize,
+  getFullDormName,
 };

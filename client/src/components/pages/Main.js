@@ -33,7 +33,7 @@ function Main() {
 
   const locations = [...new Set(machines.map((machine) => machine.location))];
   const locationOptions = locations.map((location) => {
-    return { key: location, value: location, text: location };
+    return { key: location, value: location, text: utils.getFullDormName(location) };
   });
   if (currentLocation === "" && locations.length > 0) setCurrentLocation(locations[0]);
 
@@ -80,10 +80,16 @@ function Main() {
               </Button>
             </Button.Group>
           </div>
+
+          <div style={{ marginTop: "20px" }}>
+            <p>
+              <i>Data is updated about every 5 minutes.</i>
+            </p>
+          </div>
         </div>
 
         <div style={{ flexBasis: 0, flexGrow: 999, minInlineSize: "70%" }}>
-          <Header as="h2">{currentLocation}</Header>
+          <Header as="h2">{utils.getFullDormName(currentLocation)}</Header>
 
           <Header as="h3">
             Available machines

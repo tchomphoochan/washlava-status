@@ -7,6 +7,7 @@ const WASHLAVA_APP_CLIENT_ID = process.env.WASHLAVA_APP_CLIENT_ID;
 const WASHLAVA_APP_DEVICE = process.env.WASHLAVA_APP_DEVICE;
 const WASHLAVA_USERNAME = process.env.WASHLAVA_USERNAME;
 const WASHLAVA_PASSWORD = process.env.WASHLAVA_PASSWORD;
+const REQUEST_ITERATION_TIME = process.env.REQUEST_ITERATION_TIME || 300;
 
 let currentAuthToken = undefined;
 
@@ -61,7 +62,7 @@ async function fetchMachineInfo(id) {
   return {
     id: data.identifier,
     type: data.type,
-    location: data.store.street.split(",")[0],
+    location: getLocation(data.identifier),
     status: data.status,
     since,
     queryTimestamp: new Date(),
@@ -80,19 +81,14 @@ async function doMaintainAuthJob() {
 }
 
 async function doMachineJob(id) {
-  console.log(`starting machine job ${id}`);
   try {
     const machine = await fetchMachineInfo(id);
     machines.set(machine.id, machine);
-    console.log(`successfully fetched machine ${id}`);
   } catch (ex) {
     console.log(`failed to fetch for machine ${id}`);
     console.error(ex);
   }
 }
-
-const MACHINE_ID_START = 829;
-const MACHINE_ID_END = 850;
 
 async function delay(ms) {
   return new Promise((resolve) =>
@@ -102,26 +98,94 @@ async function delay(ms) {
   );
 }
 
+const dormData = new Map(
+  Object.entries({
+    baker: {
+      name: "Baker House",
+      ranges: [[700, 721]], // 22
+    },
+    mccormick: {
+      name: "McCormick",
+      ranges: [[778, 796]], // 19
+    },
+    simmons: {
+      name: "Simmons Hall",
+      ranges: [[797, 816]], // 20
+    },
+    next: {
+      name: "Next House",
+      ranges: [[829, 850]], // 22
+    },
+    new: {
+      name: "New House",
+      ranges: [[851, 870]], // 20
+    },
+    maseeh: {
+      name: "Maseeh Hall",
+      ranges: [[871, 904]], // 34
+    },
+    ec: {
+      name: "East Campus",
+      ranges: [
+        [1039, 1062],
+        [1128, 1131],
+      ], // 24
+    },
+    macg: {
+      name: "MacGregor House",
+      ranges: [[1075, 1106]], // 32
+    },
+    bc: {
+      name: "Burton Conner",
+      ranges: [[1107, 1127]], // 21
+    },
+  })
+);
+const allMachineIds = []; // need to be precomputed
+
+function precompute() {
+  for (const [name, data] of dormData) {
+    for (const range of data.ranges) {
+      const [begin, end] = range;
+      for (var i = begin; i <= end; ++i) {
+        allMachineIds.push(i);
+      }
+    }
+  }
+  console.log(allMachineIds);
+}
+
+function getLocation(id) {
+  for (const [name, data] of dormData) {
+    if (data.ranges.some((range) => range[0] <= id && id <= range[1])) {
+      return name;
+    }
+  }
+  return undefined;
+}
+
 async function initialize() {
+  precompute();
+
   await createNewAuth();
-  setTimeout(doMaintainAuthJob, 300 * 1000);
-  for (let id = MACHINE_ID_START; id <= MACHINE_ID_END; ++id) {
+  setTimeout(doMaintainAuthJob, 10 * 60 * 1000);
+  for (const id of allMachineIds) {
     machines.set(id, {
       id,
       type: undefined,
-      location: undefined,
+      location: getLocation(id),
       status: undefined,
       queryTimestamp: new Date(),
     });
   }
-  for (let id = MACHINE_ID_START; id <= MACHINE_ID_END; ++id) {
+  for (const id of allMachineIds) {
     await delay(500); // a hacky way to not flood everything all at once
     setTimeout(() => doMachineJob(id), 0);
-    setInterval(() => doMachineJob(id), 60 * 1000);
+    setInterval(() => doMachineJob(id), REQUEST_ITERATION_TIME * 1000);
   }
   setInterval(() => {
     axios.get("http://laundry.tcpc.me");
-  }, 20 * 60 * 1000); // every 20 minutes
+  }, 30 * 60 * 1000); // every 20 minutes
 }
 
 function getMachines() {
