@@ -168,10 +168,10 @@ const dormData = new Map(
       name: "MacGregor House",
       ranges: [[1075, 1106]], // 32
     },
-    bc: {
-      name: "Burton Conner",
-      ranges: [[1107, 1127]], // 21
-    },
+    // bc: {
+    //   name: "Burton Conner",
+    //   ranges: [[1107, 1127]], // 21
+    // },
     nv: {
       name: "New Vassar",
       ranges: [[1132, 1171]], // 40
