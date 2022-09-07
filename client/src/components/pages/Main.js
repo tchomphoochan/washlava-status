@@ -48,10 +48,17 @@ function Main() {
     .filter((machine) => machine.location === currentLocation)
     .filter((machine) => machineType === "both" || machine.type === machineType);
 
+  function compareFn(a, b) {
+    if (a.since === undefined && b.since === undefined) return 0;
+    if (a.since === undefined) return 1;
+    if (b.since === undefined) return -1;
+    return a.since - b.since;
+  }
+
   const available = dormMachines.filter((machine) => machine.status === "available");
-  available.sort((a, b) => a.since ?? -Infinity - b.since ?? -Infinity);
+  available.sort(compareFn);
   const unavailable = dormMachines.filter((machine) => machine.status !== "available");
-  unavailable.sort((a, b) => a.since ?? -Infinity - b.since ?? -Infinity);
+  unavailable.sort(compareFn);
 
   return (
     <div id="main">
