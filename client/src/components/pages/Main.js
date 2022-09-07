@@ -50,8 +50,8 @@ function Main() {
 
   function compareFn(a, b) {
     if (a.since === undefined && b.since === undefined) return 0;
-    if (a.since === undefined) return 1;
-    if (b.since === undefined) return -1;
+    if (a.since === undefined) return -1;
+    if (b.since === undefined) return 1;
     return a.since - b.since;
   }
 
