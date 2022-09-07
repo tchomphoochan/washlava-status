@@ -211,7 +211,7 @@ async function initialize() {
   await log.save();
 
   await createNewAuth();
-  setTimeout(doMaintainAuthJob, 10 * 60 * 1000);
+  setInterval(doMaintainAuthJob, 10 * 60 * 1000);
   for (const id of allMachineIds) {
     machines.set(id, {
       id,
