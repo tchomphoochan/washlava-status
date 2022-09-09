@@ -176,6 +176,10 @@ const dormData = new Map(
       name: "New Vassar",
       ranges: [[1132, 1171]], // 40
     },
+    site4: {
+      name: "Site 4",
+      ranges: [[1172, 1235]], // 64
+    },
   })
 );
 const allMachineIds = []; // need to be precomputed

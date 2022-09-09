@@ -6,4 +6,4 @@ const UserSchema = new mongoose.Schema({
 });
 
 // compile model from schema
-module.exports = mongoose.model("user", UserSchema);
+module.exports = process.env.DISABLE_MONGODB ? new Object() : mongoose.model("user", UserSchema);
